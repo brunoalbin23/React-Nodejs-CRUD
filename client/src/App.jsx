@@ -24,7 +24,8 @@ function App() {
       cargo: cargo,
       anios: anios
     }).then((response) => {
-      console.log(response)
+      mostrar()
+      limpiarCampos()
     })
   }
 
@@ -32,6 +33,30 @@ function App() {
     Axios.get('http://localhost:3001/empleados').then((response) => {
       setEmpleadosList(response.data);
     })
+  }
+
+  const update = () => {
+    Axios.put('http://localhost:3001/update', {
+      id: id,
+      nombre: nombre,
+      edad: edad,
+      pais: pais,
+      cargo: cargo,
+      anios: anios
+    }).then((response) => {
+      mostrar()
+      limpiarCampos()
+      console.log(response)
+    })
+  }
+
+  const limpiarCampos = () => {
+    setEditar(false);
+    setNombre('');
+    setEdad('');
+    setPais('');
+    setCargo('');
+    setAnios('');
   }
 
   const editarEmpleado = (val) => {
@@ -80,8 +105,8 @@ function App() {
           {
             editar ? 
             <div>
-              <button onClick={agregar} className='btn btn-warning'>Actualizar</button>
-              <button onClick={agregar} className='btn btn-info'>Cancelar</button>
+              <button onClick={update} className='btn btn-warning m-2'>Actualizar</button>
+              <button onClick={agregar} className='btn btn-info m-2'>Cancelar</button>
             </div>   
             : <button onClick={agregar} className='btn btn-success'>Registrar</button>
           }
