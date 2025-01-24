@@ -2,15 +2,17 @@ import { useState } from 'react'
 import Axios from 'axios'
 import './App.css'
 import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from 'sweetalert2'
+import { useEffect } from 'react';
 
 function App() {
 
   const [id, setId] = useState()
-  const [nombre, setNombre] = useState('')
-  const [edad, setEdad] = useState()
-  const [pais, setPais] = useState('')
-  const [cargo, setCargo] = useState('')
-  const [anios, setAnios] = useState('')
+  const [nombre, setNombre] = useState(''); // Cadena vacía como valor inicial
+  const [edad, setEdad] = useState(25); // Número inicial
+  const [pais, setPais] = useState(''); // Cadena vacía
+  const [cargo, setCargo] = useState(''); // Cadena vacía
+  const [anios, setAnios] = useState(5);
 
   const [editar, setEditar] = useState(false)
 
@@ -26,6 +28,12 @@ function App() {
     }).then((response) => {
       mostrar()
       limpiarCampos()
+      Swal.fire({
+        title: "<strong>Registro exitoso</strong>",
+        html: "<i>El empleado <strong>"+nombre+"</strong> fue registrado con exito!</i>",
+        icon: 'success',
+        timer: 3000
+    })
     })
   }
 
@@ -46,9 +54,46 @@ function App() {
     }).then((response) => {
       mostrar()
       limpiarCampos()
-      console.log(response)
+      Swal.fire({
+        title: "<strong>Actualización exitosa</strong>",
+        html: "<i>El empleado <strong>"+nombre+"</strong> fue actualizado con exito!</i>",
+        icon: 'success',
+        timer: 3000
+    })
     })
   }
+
+  const deleteEmpleado = (val) => {
+    Swal.fire({
+      title: "<strong>Eliminar empleado!</strong>",
+      html: "<i>Desea eliminar el empleado <strong>" + val.nombre + "</strong>?</i>",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Si, eliminar!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Axios.delete(`http://localhost:3001/delete/${val.id}`).then(() => {
+          mostrar();
+          limpiarCampos();
+          Swal.fire({
+            title: "Eliminado!",
+            text: val.nombre + " fue eliminado!",
+            icon: "success"
+          });
+        }).catch((err) => {
+          Swal.fire({
+            title: "Error!",
+            text: "No se pudo eliminar el empleado!",
+            icon: "error"
+          });
+        }
+    )}
+    });
+  };
+  
 
   const limpiarCampos = () => {
     setEditar(false);
@@ -69,7 +114,9 @@ function App() {
     setAnios(val.anios);
   }
 
-  mostrar();
+  useEffect(() => {
+    mostrar();
+  }, []);
 
   return (
     <div className='container'>
@@ -139,7 +186,7 @@ function App() {
                       <td>
                       <div className="btn-group" role="group" aria-label="Basic example">
                         <button onClick={()=> {editarEmpleado(val)}} type="button" className="btn btn-primary btn-info">Editar</button>
-                        <button type="button" className="btn btn-primary btn-danger">Eliminar</button>
+                        <button onClick={()=> {deleteEmpleado(val)}} type="button" className="btn btn-primary btn-danger">Eliminar</button>
                       </div>
                       </td>
                     </tr>
