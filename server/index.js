@@ -26,7 +26,7 @@ app.post("/create", (req,res)=>{
         if(err){
             console.log(err);
         }else{
-            res.send("Values inserted");
+            res.send(result);
         }
     });
     })
@@ -57,10 +57,25 @@ app.put("/update", (req,res)=>{
         if(err){
             console.log(err);
         }else{
-            res.send("Values updated");
+            res.send(result);
         }
     });
     })
+
+app.delete("/delete/:id", (req,res)=>{
+
+    const id = req.params.id;
+
+    db.query("DELETE FROM empleado WHERE id=?", [id]
+    ,(err,result)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.send(result);
+        }
+    });
+    })
+
 
 app.listen(3001,()=>{
     console.log("Server is running on port 3001");
